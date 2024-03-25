@@ -5,18 +5,37 @@ const telegramCloseXLoc = 'div[data-testid="crossButton"]';
 const servicesBlockLoc = 'section[data-testid="services"]';
 const servicesPopularTitleLoc = 'div[data-testid="services__populyarni"]';
 const popularniServiceElementLoc = `${servicesBlockLoc} [class*="RentzilaProposes_proposes_item"]`;
-const popularniServiceElementNameLoc = '[class*="RentzilaProposes_name"]';
+const popularniServiceElementNameLoc = `${popularniServiceElementLoc} [class*="RentzilaProposes_name"]`;
 const specialEquipmentBlockLoc = 'section[data-testid="specialEquipment"]';
 const specialEquipmentPopularniTitleLoc = 'h3[data-testid="specialEquipment__populyarna"]';
 const popularniSpecialEquipmentElementLoc =`${specialEquipmentBlockLoc} [class*="RentzilaProposes_proposes_item"]`;
-const popularniSpecialEquipmentElementNameLoc = '[class*="RentzilaProposes_name"]';
+const popularniSpecialEquipmentElementNameLoc = `${popularniSpecialEquipmentElementLoc} [class*="RentzilaProposes_name"]`;
+const footerLoc = 'div[class*="Footer_footer"]';
+const footerLogoLoc = `${footerLoc} div[data-testid="logo"]`;
+const footerAboutUsLabelLoc = `${footerLoc} div[data-testid="content"]`;
+const footerConfidPoliticLinkLoc = `${footerLoc} a[href="/privacy-policy/"]`;
+const footerCookieUsingRulesLinkLoc = `${footerLoc} a[href="/cookie-policy/"]`;
+const footerAccessAndUsingTermsLinkLoc = `${footerLoc} a[href="/terms-conditions/"]`;
+const footerForUsersLabelLoc = `${footerLoc} div[class*="RentzilaForBuyers_title"]`;
+const footerAnnouncementsLinkLoc = `${footerLoc} a[href="/products/"]`;
+const footerTendersLinkLoc = `${footerLoc} a[href="/tenders-map/"]`;
+const footerContactsAndEmailLinkLoc = `${footerLoc} a[href="mailto:info@rentzila.com.ua"]`;
+const footerCopyrightLabelLoc = `${footerLoc} div[data-testid="copyright"]`;
+const pageTitleLoc = 'h1[class*="HeroSection_title"]';
+const searchInputLoc = 'input[data-testid="searchInput"]';
+const searchDropDownLoc = 'div[class*="LeftsideSearch_container"]';
+const searchDropDownItemLoc = 'h6[class*="LeftsideSearch_title"]';
+const searchDropDownItemSearchHistoryLoc = `${searchDropDownItemLoc}:nth-of-type(1)`;
+const searchDropDownItemServicesLoc = `${searchDropDownItemLoc}:nth-of-type(2)`;
+const searchDropDownItemCategoriesLoc = `${searchDropDownItemLoc}:nth-of-type(3)`;
+const searchPosivTechAndGrainCulturesLoc = 'div=Посів технічних та зернових культур';
+const searchObpryskLoc = 'div=Обприскування';
+const searchVnesDobryvLoc = 'div=Внесення добрив';
+const searchExcavForZnesLoc = 'div=екскаватори для знесення';
+const searchVacuumExcavLoc = 'div=вакуумні екскаватори';
+const searchGusenExcavLoc = 'div=гусеничні екскаватори';
 
 
-const servicesBlockListLoc = '//*[@id="__next"]/div[3]/main/section[1]/div[2]';
-
-
-const specialEquipmentPopularTitleLoc = 'h3[data-testid="specialEquipment__populyarna"]';
-const specialEquipmentBlockListLoc = '//*[@id="__next"]/div[3]/main/section[2]/div[2]';
 
 
 
@@ -33,17 +52,15 @@ const recaptchaPasswordResetFormLoc = '//*[@id="recaptcha-anchor"]/div[4]';
 const resetPasswordBtnLoc = '//*[@id="__next"]/div[1]/div[1]/div/form/div[3]/button';
 const resetPasswordWarningMessageLoc = '//*[@id="__next"]/div[1]/div[1]/div/form/div[1]/p';
 
+const baseURL = browser.options.baseUrl;
+
 class MainPage extends Page {
 
-    get servicesBlock() {return super.getElement(servicesBlockLoc);}
-    get servicesBlockList() {return super.getElement(servicesBlockListLoc);}
-    get servicesPopularTitle() {return super.getElement(servicesPopularTitleLoc);}
-    get telegramCloseX() {return super.getElement(telegramCloseXLoc);}
-    get specialEquipmentBlock() {return super.getElement(specialEquipmentBlockLoc);}
-    get specialEquipmentPopularTitle() {return super.getElement(specialEquipmentPopularTitleLoc);}
-    get specialEquipmentBlockList() {return super.getElement(specialEquipmentBlockListLoc);}
+    
 
 
+    // get footerLogo() {return super.getElement(footerLogoLoc)};
+    // get aboutUs() {return super.getElement(footerAboutUsLabelLoc)};
 
     get enterBtn() {return super.getElement(enterBtnLoc);}
     get enterInBtn() {return super.getElement(enterInBtnLoc);}
@@ -84,10 +101,11 @@ class MainPage extends Page {
 
     public async clickOnPopularniServiceItem(i: number): Promise<void> {
         await super.click(await this.getPopularniServicesItem(i));
+        await super.waitUntilUrlChange(`${baseURL}products/`,3000);
     }
 
     public async scrollIntoSpecialEquipmentBlock(): Promise<void> {
-        await super.scrollElementIntoViewTop(specialEquipmentBlockListLoc);
+        await super.scrollElementIntoViewTop(specialEquipmentBlockLoc);
     }
 
     public async checkIfSpecialEquipmentPopularniTitleIsDisplayed(): Promise<boolean> {
@@ -103,28 +121,149 @@ class MainPage extends Page {
     }
 
     public async getNameOfPopularniSpecialEquipmentItem(i: number): Promise<string> {
-        return (await (await this.getPopularniServicesItem(i)).$(popularniSpecialEquipmentElementNameLoc).getText());
+        return (await (await this.getPopularniSpecialEquipmentItem(i)).$(popularniSpecialEquipmentElementNameLoc).getText());
     }
 
     public async clickOnPopularniSpecialEquipmentItem(i: number): Promise<void> {
         await super.click(await this.getPopularniSpecialEquipmentItem(i));
+        await super.pause(1500);
     }
 
+    public async scrollIntoFooter(): Promise<void> {
+        await super.scrollElementIntoViewTop(footerLoc);
+    }
 
-    // public async clickOnServicesItem (i:number) {
-    //     (await $('//*[@id="__next"]/div[3]/main/section[1]/div[2]/div['+i+']')).click();
-    // }
-    // public async getNameOfServiceItem (i:number) {
-    //     await $('//*[@id="__next"]/div[3]/main/section[1]/div[2]/div['+i+']').waitForDisplayed({ timeout: 3000 })
-    //     return (await $('//*[@id="__next"]/div[3]/main/section[1]/div[2]/div['+i+']')).getText(); 
-    // }
+    public async checkIfFooterIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerLoc);
+      }
+
+    public async checkIfFooterLogoIsNotClickable(): Promise<boolean>{
+        return !(await super.isElementClickable(footerLogoLoc));
+    }
+
+    public async checkIfFooterAboutUsLabelIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerAboutUsLabelLoc);
+      }
+
+    public async checkIfFooterConfidPoliticLinkIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerConfidPoliticLinkLoc);
+      }
+
+    public async checkIfFooterCookieUsingRulesLinkIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerCookieUsingRulesLinkLoc);
+      }
+
+    public async checkIfFooterAccessAndUsingTermsLinkIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerAccessAndUsingTermsLinkLoc);
+      }
+
+    public async checkIfFooterForUsersLabelIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerForUsersLabelLoc);
+      }
+
+    public async checkIfFooterAnnouncementsLinkIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerAnnouncementsLinkLoc);
+      }
+
+    public async checkIfFooterTendersLinkIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerTendersLinkLoc);
+      }
+
+    public async checkIfFooterContactsAndEmailLinkIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerContactsAndEmailLinkLoc);
+      }
+
+    public async checkIfFooterLogoIsDisplayed(): Promise<boolean> {
+        return super.isElementDisplayed(footerLogoLoc);
+      }
+
+    public async checkIfFooterCopyrightLabelIsDisplayed(): Promise<boolean> {
+       return super.isElementDisplayed(footerCopyrightLabelLoc);
+    }
+
+    public async clickOnConfidPoliticLink(): Promise<void> {
+      await super.click(footerConfidPoliticLinkLoc);
+  }
+
+    public async clickOnCookieUsingRulesLink(): Promise<void> {
+      await super.click(footerCookieUsingRulesLinkLoc);
+  }
     
-    public async clickOnSpecialEquipmentItem (i:number) {
-        (await $('//*[@id="__next"]/div[3]/main/section[2]/div[2]/div['+i+']/div[1]')).click();
-    }
-    public async getNameOfSpecialEquipmentItem (i:number) {
-        return (await $('//*[@id="__next"]/div[3]/main/section[2]/div[2]/div[1]/div['+i+']')).getText(); 
-    }
+    public async clickOnAccessAndUsingTermsLink(): Promise<void> {
+      await super.click(footerAccessAndUsingTermsLinkLoc);
+}
+
+    public async clickOnAnnouncementsLink(): Promise<void> {
+      await super.click(footerAnnouncementsLinkLoc);
+}
+
+    public async checkIfPageTitleIsDisplayed(): Promise<boolean> {
+      return super.isElementDisplayed(pageTitleLoc);
+}
+
+    public async getTextOfPageTitle(): Promise<string> {
+    return super.getText(pageTitleLoc);
+   }
+
+   public async clickOnTendersLink(): Promise<void> {
+    await super.click(footerTendersLinkLoc);
+}
+
+   public async getContactAndEmailLinkAddress(): Promise<string> {
+    return super.getElementAttribute(footerContactsAndEmailLinkLoc,'href');
+}
+
+   public async clickOnSearchInput(): Promise<void> {
+     await super.click(searchInputLoc);
+}
+
+  public async checkIfSearchDropDownIsDisplayed(): Promise<boolean> {
+    return super.isElementDisplayed(searchDropDownLoc);
+}
+
+public async checkIfHistoryOfSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchDropDownItemSearchHistoryLoc);
+}
+
+public async checkIfServicesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchDropDownItemServicesLoc);
+}
+
+public async checkIfCategoriesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchDropDownItemCategoriesLoc);
+}
+
+public async checkIfPosivTechAndGrainCultInServicesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchPosivTechAndGrainCulturesLoc);
+}
+
+public async checkIfObpryskInServicesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchObpryskLoc);
+}
+
+public async checkIfVnesDobryvServicesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchVnesDobryvLoc);
+}
+
+public async checkIfExcavForZnesInCategoriesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchExcavForZnesLoc);
+}
+
+public async checkIfVacuumExcavInCategoriesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchVacuumExcavLoc);
+}
+
+public async checkIfGusenExcavInCategoriesSearchIsDisplayed(): Promise<boolean> {
+  return super.isElementDisplayed(searchGusenExcavLoc);
+}
+
+public async setValueInSearchInput(value: string): Promise<void> {
+  await super.setValue(searchInputLoc,value);
+}
+    
+
+
+    
 
 
 

@@ -149,6 +149,11 @@ export const config: Options.Testrunner = {
         timeout: 60000
     },
 
+    before: function () {
+        browser.setWindowSize(1620, 1000);
+      },
+    
+
     //
     // =====
     // Hooks

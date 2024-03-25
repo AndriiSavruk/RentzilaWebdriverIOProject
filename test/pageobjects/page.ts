@@ -148,6 +148,7 @@ export default class Page {
       public async isElementClickable(element: string | WebdriverIO.Element): Promise<boolean> {
         return (await this.getElement(element)).isClickable();
       }
+
     
       public async isElementEnabled(element: string | WebdriverIO.Element): Promise<boolean> {
         return (await this.getElement(element)).isEnabled();

@@ -1,8 +1,8 @@
 import { expect } from '@wdio/globals'
-import MainPage from '../pageobjects/main.page.js'
 import unitPage from '../pageobjects/unit.page.js'
 import mainPage from '../pageobjects/main.page.js'
-import productsPage from '../pageobjects/products.page.js'
+import productsPage from '../pageobjects/products.page.js';
+import tendersPage from '../pageobjects/tenders.page.js';
 import specialEquipment from '../../data/specialEquipment.json' assert { type: 'json' };
 
 const baseURL = browser.options.baseUrl;
@@ -11,157 +11,36 @@ describe('Test cases', () => {
     beforeEach(async function () {
          // Preconditions
         await mainPage.open('');
-        await browser.setWindowSize(1620, 1000);
         await mainPage.clickOnTelegramClose();
       });
-    it.skip('Test-case #C212 Checking "Послуги" section on the main page', async () => {
-        // Step 1  Scroll to the ""Послуги"" section and check if the ""Популярні"" tab and 7 services 
-        // below the ""Послуги"" label are displayed.
-        await mainPage.scrollIntoViewServicesBlock();
-        await expect(await mainPage.checkIfServicesPopularniTitleIsDisplayed()).toBe(true);
-        const popularniServices = await mainPage.numberOfPopularniServices();
-        await expect(popularniServices).toEqual(7);
-        // Step 5 Repeat test case for all other services on all tabs below the ""Послуги"" label.
-        for (let i=0; i<popularniServices; i++) {
-        // Step 2 Click on the first service below the ""Послуги"" label.
-        let serviceName:string;
-        serviceName = await mainPage.getNameOfPopularniServiceItem(i);
-        await mainPage.clickOnPopularniServiceItem(i);
-        await expect(browser).toHaveUrl(`${baseURL}products/`);
-        await expect(await productsPage.getNameOfChoosenFilter()).toBe(serviceName);
+    it('Test-case #C530 Verify Search Input', async () => {
+        // Step 1 Click on the search field input
+        await mainPage.clickOnSearchInput();
+        await expect(await mainPage.checkIfSearchDropDownIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfHistoryOfSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfServicesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfCategoriesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfPosivTechAndGrainCultInServicesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfObpryskInServicesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfVnesDobryvServicesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfExcavForZnesInCategoriesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfVacuumExcavInCategoriesSearchIsDisplayed()).toBe(true);
+        await expect(await mainPage.checkIfGusenExcavInCategoriesSearchIsDisplayed()).toBe(true);
+        // Step 2 Press the ""Enter"" keyboard button
+        await mainPage.clickEnterKey();
+        await expect(await productsPage.getCurrentUrl()).toBe(`${baseURL}products/`);
+        await expect(await productsPage.getSearchInputValue()).toBe('');
         await expect(await productsPage.isUnitsBlockDisplayed()).toBe(true);
-        // Step 3 Click on the first relevant unit.
-        await productsPage.waitUntillFirstUnitDisplayed();
-        await productsPage.clickOnFirstUnit();
-        await expect(browser).toHaveUrlContaining('unit');
-        await expect(unitPage.servicesBlock).toHaveTextContaining(serviceName);
-        // // Step 4 Click on the logo in the left corner of the page.
-        await unitPage.clickOnLogo();
-        await expect(browser).toHaveUrl(`${baseURL}`);
-        }
-    })
+        // Step 3 Return back to the previous page, enter ""Трактор"" into the ""Пошук оголошення 
+        //за ключовими словами"" input and press the ""Enter"" keyboard button.
+        await productsPage.browserBack();
+        await mainPage.setValueInSearchInput('Трактор');
+        await mainPage.clickEnterKey();
+        await expect(await productsPage.getCurrentUrl()).toBe(`${baseURL}products/`);
+        await expect(await productsPage.checkIfMapIsDisplayed()).toBe(true);
+        await expect(await productsPage.getUnitsBlocTitleText()).toContain('Трактор');
 
-    it('Test-case#C213 Checking ""Спецтехніка"" section on the main page', async () => {
-         // Step 1 Scroll down to the ""Спецтехніка"" section on the main page and check if 
-         // the ""Популярна"" tab and 7 services below the ""Спецтехніка"" label are displayed.
-        await mainPage.scrollIntoSpecialEquipmentBlock();
-        await expect(await mainPage.checkIfSpecialEquipmentPopularniTitleIsDisplayed()).toBe(true);
-        const popularniSpecialEquipment = await mainPage.numberOfPopularniSpecialEquipment();
-        await expect(popularniSpecialEquipment).toEqual(7);
-        //  // Step 5 Repeat test case for all other elements on all tabs below the ""Спецтехніка"" label.
-        //  for (let i=1; i<=7; i++) {
-        // // Step 2 Click on the first element in the ""Спецтехніка"" list.
-        let specialEquipmentName: string;
-        specialEquipmentName = await mainPage.getNameOfPopularniSpecialEquipmentItem(0);
-        await mainPage.clickOnPopularniSpecialEquipmentItem(0);
-        await expect(browser).toHaveUrlContaining(`${baseURL}products/`);
-        // await expect(await productsPage.getNameOfChoosenFilter()).toBe(specialEquipment.specialEquipmentName);
-        await expect(await productsPage.isUnitsBlockDisplayed()).toBe(true);
-        // // Step 3 Click on the first relevant unit. (relevant property checking is available for manual testing only)
-        // // await ProductsPage.clickOnUnitBlock(1);
-        // await expect(browser).toHaveUrlContaining('unit');
-        // // Step 4 Click on the logo in the left corner of the page.
-        // // await UnitPage.clickOnLogo();
-        // await expect(browser).toHaveUrl('https://stage.rentzila.com.ua/');
-        //  }
-    })
-
-    // it('Test-case#C214  Verify that all elements on the footer are displayed and all links are clickable', async () => {
-    //     // Preconditions
-    //     await browser.reloadSession();
-    //     await browser.url('');
-    //     await browser.maximizeWindow();
-    //     // Step 1  Scroll down to the footer.
-    //     await MainPage.footer.scrollIntoView();
-    //     await MainPage.clickOnTelegramClose();
-    //     await expect(MainPage.footer).toBeDisplayed();
-    //     await expect(MainPage.footerLogo).not.toBeClickable();
-    //     // Step 2  Check that ""Про нас"" label is displayed on the footer.
-    //     await expect(MainPage.aboutUsLabel).toBeDisplayed();
-    //     // Step 3 Check that ""Політика конфіденційності"" link is displayed on the footer.
-    //     await expect(MainPage.politicConfLink).toBeDisplayed();
-    //     // Step 4 Check that ""Правила використання файлів cookie"" link is displayed on the footer.
-    //     await expect(MainPage.cookieUsingRulesLink).toBeDisplayed();
-    //     // Step 5 Check that ""Умови доступу та користування"" link is displayed on the footer.
-    //     await expect(MainPage.accessAndUsingTermsLink).toBeDisplayed();
-    //     // Step 6 Check that ""Користувачам"" label is displayed on the footer.
-    //     await expect(MainPage.forUsersLabel).toBeDisplayed();
-    //     // Step 7 Check that ""Оголошення"" link is displayed on the footer.
-    //     await expect(MainPage.announceLink).toBeDisplayed();
-    //     // Step 8 Check that ""Тендери"" link is displayed on the footer.
-    //     await expect(MainPage.tendersLink).toBeDisplayed();
-    //     // Step 9 Check that the ""Контакти"" label and email are displayed on the footer.
-    //     await expect(MainPage.contactsLabel).toBeDisplayed();
-    //     // Step 10 Check that the Rentzila logo is displayed on the footer.
-    //     await expect(MainPage.footerLogo).toBeDisplayed();
-    //     // Step 11 Check that the ""Усі права захищені"" label is displayed on the footer.
-    //     await expect(MainPage.allRigthsProtectedLabel).toBeDisplayed();
-    //     // Step 12 Click the ""Політика конфіденційності"" link on the footer.
-    //     await MainPage.clickOnPoliticsConfLink();
-    //     await expect(browser).toHaveUrlContaining('privacy-policy');
-    //     await expect(browser).toHaveTitleContaining('Політика конфіденційності');
-    //     await browser.back()
-    //     // Step 13 Scroll down to the footer and click the ""Правила використання файлів cookie"" link  on the footer.
-    //     await MainPage.footer.scrollIntoView();
-    //     await MainPage.clickOnCookieUsingRules();
-    //     await expect(browser).toHaveUrlContaining('cookie-policy');
-    //     await expect(browser).toHaveTitleContaining('Політика використання cookie');
-    //     await browser.back();
-    //     // Step 14 Scroll down to the footer and click the ""Умови доступу та користування"" link on the footer.
-    //     await MainPage.footer.scrollIntoView();
-    //     await MainPage.clickOnAccessAndUsingTermsLink();
-    //     await expect(browser).toHaveUrlContaining('terms-conditions');
-    //     await expect(browser).toHaveTitleContaining('Угода користувача');
-    //     await browser.back();
-    //     // Step 15 Scroll down to the footer and click on the ""Оголошення"" link.
-    //     await MainPage.footer.scrollIntoView();
-    //     await MainPage.clickOnAnnounceLink();
-    //     await expect(browser).toHaveUrlContaining('products');
-    //     await expect(ProductsPage.searchInput).toBeDisplayed();
-    //     await expect(ProductsPage.searchInput).toHaveAttr('placeholder', 'Пошук оголошень або послуг');
-    //     // Step 16  Click the Rentzila logo on the header.
-    //     await ProductsPage.clickOnLogo();
-    //     await expect(browser).toHaveUrl('https://stage.rentzila.com.ua/');
-    //     await expect(MainPage.serviceSearchSpecTechTitle).toBeDisplayed();
-    //     await expect(MainPage.serviceSearchSpecTechTitle).toHaveTextContaining('Сервіс пошуку послуг спецтехніки');
-    //     // Step 17 Scroll down to the footer and click the ""Тендери"" link.
-    //     await MainPage.footer.scrollIntoView();
-    //     await MainPage.clickOnTendersLink();
-    //     await expect(browser).toHaveUrlContaining('tenders-map');
-    //     await expect(TendersPage.searchInput).toBeDisplayed();
-    //     await expect(TendersPage.searchInput).toHaveAttr('placeholder', 'Пошук тендера за ключовими словами');
-    //     // Step 18 Click the Rentzila logo on the header.
-    //     await TendersPage.clickOnLogo();
-    //     await expect(browser).toHaveUrl('https://stage.rentzila.com.ua/');
-    //     // Step 19 Click on the ""info@rentzila.com.ua"" email on the footer.
-    //     await MainPage.footer.scrollIntoView();
-    //     await expect(MainPage.emailLink).toHaveHref('mailto:info@rentzila.com.ua');
-    // })
-
-    // it('Test-case #C530 Verify Search Input', async () => {
-    //     // Preconditions
-    //     await browser.reloadSession();
-    //     await browser.url('');
-    //     await browser.maximizeWindow();
-    //     await MainPage.clickOnTelegramClose();
-    //     // Step 1 Click on the search field input
-    //     await MainPage.clickOnSearchInput();
-    //     await expect(MainPage.searchPopUp).toBeDisplayed();
-    //     await expect(MainPage.popUpServicesTitle).toBeDisplayed();
-    //     await expect(MainPage.popUpCategoriesTitle).toBeDisplayed();
-    //     // Step 2 Press the ""Enter"" keyboard button
-    //     await browser.keys([Key.Enter]);
-    //     await expect(browser).toHaveUrlContaining('products');
-    //     await expect(ProductsPage.searchInput).toHaveValue('');
-    //     await expect(ProductsPage.unitsBlock).toBeDisplayed();
-    //     // Step 3 Return back to the previous page, enter ""Трактор"" into the ""Пошук оголошення 
-    //     //за ключовими словами"" input and press the ""Enter"" keyboard button.
-    //     await browser.back();
-    //     await MainPage.setValueInSearchInput('Трактор');
-    //     await browser.pause(3000);
-    //     await browser.keys([Key.Enter]);
-    //     await browser.pause(3000);
-    //     await expect(browser).toHaveUrlContaining('products');
+   
     //     await expect(ProductsPage.unitsBlockTitle).toHaveTextContaining('Трактор');
     //     // Step 4 Click on any first unit
     //     await ProductsPage.clickOnUnitBlock(1);
@@ -297,7 +176,7 @@ describe('Test cases', () => {
     //     await MainPage.clickOnSearchClearBtn();
     //     await expect(MainPage.searchResult).not.toBeDisplayed();
     //     await expect(MainPage.searchInput).toHaveValue('')
-    // })
+    });
     
     // it('Test-case #C226 Verify ""У Вас залишилися питання?"" form', async () => {
     //     // Preconditions
@@ -535,60 +414,60 @@ describe('Test cases', () => {
     //     await expect(ProductsPage.choosenFilters).toHaveTextContaining('Обрізання дерев');
     // })
      
-    it.skip('Test-case#C200 Authorization with empty fields', async () => {
-        // Preconditions
-        await browser.reloadSession();
-        await browser.url('');
-        await browser.maximizeWindow();
-        await MainPage.clickOnTelegramClose();
-        // Step 1 Click on the ""Увійти"" at the bottom of the form with all fields empty.
-        await MainPage.clickOnEnterBtn();
-        await MainPage.clickOnEnterInBtn();
-        await expect(MainPage.autorizationPopUp).toBeDisplayed();
-        await expect(MainPage.emailField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.emailFieldWarningMessage).toBeDisplayed();
-        await expect(MainPage.passwordField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.passwordFieldWarningMessage).toBeDisplayed();
-        // Step 2  Enter your email (provided by team lead) into the ""E-mail або номер телефону"" Input:
-        // For example: ""testuserrentzila@gmail.com"". Then click on the ""Увійти"" at the bottom of the form.
-        await MainPage.setValueEmailField('testuserrentzila@gmail.com');
-        await MainPage.clickOnEnterInBtn();
-        await expect(MainPage.autorizationPopUp).toBeDisplayed();
-        await expect(MainPage.emailField).not.toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.emailFieldWarningMessage).not.toBeDisplayed();
-        await expect(MainPage.passwordField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.passwordFieldWarningMessage).toBeDisplayed();
-        // Step 3  The ""E-mail або номер телефону"" clear.
-        await MainPage.clearEmailField();
-        await expect(MainPage.emailField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.emailFieldWarningMessage).toBeDisplayed();
-        // Step 4 Enter any valid password(provided by team lead) into the ""Пароль"" Input:
-        // For example: ""Testuser10"". Then click on the ""Увійти"" at the bottom of the form.
-        await MainPage.setValuePasswordField('Testuser10');
-        await MainPage.clickOnEnterInBtn();
-        await expect(MainPage.autorizationPopUp).toBeDisplayed();
-        await expect(MainPage.emailField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.emailFieldWarningMessage).toBeDisplayed();
-        await expect(MainPage.passwordField).not.toHaveElementClass('CustomReactHookInput_error_input___nw4a');
-        await expect(MainPage.passwordFieldWarningMessage).not.toBeDisplayed();
-    })
+    // it.skip('Test-case#C200 Authorization with empty fields', async () => {
+    //     // Preconditions
+    //     await browser.reloadSession();
+    //     await browser.url('');
+    //     await browser.maximizeWindow();
+    //     await MainPage.clickOnTelegramClose();
+    //     // Step 1 Click on the ""Увійти"" at the bottom of the form with all fields empty.
+    //     await MainPage.clickOnEnterBtn();
+    //     await MainPage.clickOnEnterInBtn();
+    //     await expect(MainPage.autorizationPopUp).toBeDisplayed();
+    //     await expect(MainPage.emailField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.emailFieldWarningMessage).toBeDisplayed();
+    //     await expect(MainPage.passwordField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.passwordFieldWarningMessage).toBeDisplayed();
+    //     // Step 2  Enter your email (provided by team lead) into the ""E-mail або номер телефону"" Input:
+    //     // For example: ""testuserrentzila@gmail.com"". Then click on the ""Увійти"" at the bottom of the form.
+    //     await MainPage.setValueEmailField('testuserrentzila@gmail.com');
+    //     await MainPage.clickOnEnterInBtn();
+    //     await expect(MainPage.autorizationPopUp).toBeDisplayed();
+    //     await expect(MainPage.emailField).not.toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.emailFieldWarningMessage).not.toBeDisplayed();
+    //     await expect(MainPage.passwordField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.passwordFieldWarningMessage).toBeDisplayed();
+    //     // Step 3  The ""E-mail або номер телефону"" clear.
+    //     await MainPage.clearEmailField();
+    //     await expect(MainPage.emailField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.emailFieldWarningMessage).toBeDisplayed();
+    //     // Step 4 Enter any valid password(provided by team lead) into the ""Пароль"" Input:
+    //     // For example: ""Testuser10"". Then click on the ""Увійти"" at the bottom of the form.
+    //     await MainPage.setValuePasswordField('Testuser10');
+    //     await MainPage.clickOnEnterInBtn();
+    //     await expect(MainPage.autorizationPopUp).toBeDisplayed();
+    //     await expect(MainPage.emailField).toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.emailFieldWarningMessage).toBeDisplayed();
+    //     await expect(MainPage.passwordField).not.toHaveElementClass('CustomReactHookInput_error_input___nw4a');
+    //     await expect(MainPage.passwordFieldWarningMessage).not.toBeDisplayed();
+    // })
 
-        it.skip('Test-case#C199 Reset the password with invalid email', async () => {
-            // Preconditions
-            await browser.reloadSession();
-            await browser.url('');
-            await browser.maximizeWindow();
-            await MainPage.clickOnTelegramClose();
-            // Step 1  Click on the ""Забули пароль?"" below the password input field.
-            await MainPage.clickOnEnterBtn();
-            await MainPage.clickOnForgotPasswordLink();
-            await expect(MainPage.passwordResetForm).toBeDisplayed();
-            // Step 2  Click on the ""Відновити пароль"" button with empty email field.
-            // await MainPage.clickOnRecaptchaPasswordResetForm();
-            await MainPage.clickOnResetPasswordBtn();
-            await expect(MainPage.resetPasswordWarningMessage).toBeDisplayed();
+    //     it.skip('Test-case#C199 Reset the password with invalid email', async () => {
+    //         // Preconditions
+    //         await browser.reloadSession();
+    //         await browser.url('');
+    //         await browser.maximizeWindow();
+    //         await MainPage.clickOnTelegramClose();
+    //         // Step 1  Click on the ""Забули пароль?"" below the password input field.
+    //         await MainPage.clickOnEnterBtn();
+    //         await MainPage.clickOnForgotPasswordLink();
+    //         await expect(MainPage.passwordResetForm).toBeDisplayed();
+    //         // Step 2  Click on the ""Відновити пароль"" button with empty email field.
+    //         // await MainPage.clickOnRecaptchaPasswordResetForm();
+    //         await MainPage.clickOnResetPasswordBtn();
+    //         await expect(MainPage.resetPasswordWarningMessage).toBeDisplayed();
 
-        })
+    //     })
 
 
     
